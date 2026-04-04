@@ -38,6 +38,21 @@ def drop_analytics_schema():
     logging.info("🧹 Analytics schema reset successfully.")
 
 
+def drop_operationals_schema():
+    load_dotenv()
+    db_url = os.getenv("DB_URL")
+    if not db_url:
+        raise ValueError("DB_URL not found in .env")
+
+    engine = create_engine(db_url)
+
+    logging.info("Dropping operationals schema...")
+    with engine.begin() as conn:
+        conn.execute(text("DROP SCHEMA IF EXISTS operationals CASCADE;"))
+        conn.execute(text("CREATE SCHEMA operationals;"))
+    logging.info("🧹 Operationals schema reset successfully.")
+
+
 def wipe(mode: str):
     mode = mode.lower()
 
@@ -50,6 +65,9 @@ def wipe(mode: str):
     if mode in ("analytics", "all"):
         drop_analytics_schema()
 
+    if mode in ("operationals", "all"):
+        drop_operationals_schema()
+
     logging.info(f"✨ Wipe completed for mode: {mode}")
 
 
@@ -57,10 +75,10 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Wipe ETL data folders and/or analytics schema.")
+        description="Wipe ETL data folders including operationals and/or analytics schema.")
     parser.add_argument(
         "mode",
-        choices=["raw", "processed", "analytics", "all"],
+        choices=["raw", "processed", "analytics", "operationals", "all"],
         help="Choose what to wipe."
     )
 
