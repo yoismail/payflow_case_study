@@ -1,208 +1,217 @@
-# PayFlow Database Optimization II
+# 📦 Payflow Case Study — End‑to‑End ETL & Analytics Pipeline
 
-A data engineering case study that builds an ETL workflow around the Brazilian Olist e-commerce dataset. The project covers dataset acquisition, exploratory profiling, raw-to-processed transformations, and PostgreSQL loading into an operational schema.
+This project implements a **production‑grade ETL and analytics pipeline** for the Brazilian e‑commerce dataset (Olist).  
+It includes:
 
-## Project Overview
+- A **raw → processed** transformation pipeline  
+- A **processed → analytics warehouse** loader  
+- A **wipe/reset system** for safe re‑runs  
+- A **full pipeline orchestrator**  
+- Clean, color‑coded logging  
+- Schema‑validated dimension and fact building  
 
-**Business context:** PayFlow is modeled as a fintech expanding into Brazil's e-commerce market. This repository focuses on preparing transaction-like commerce data for downstream analytics and operational reporting.
+The goal is to demonstrate a clean, maintainable, and reproducible data engineering workflow.
 
-**Current scope:**
-- Download the Olist dataset with the Kaggle CLI
-- Explore source tables and profile data quality
-- Clean customers and sellers data
-- Merge orders, items, and payments into a raw transactions dataset
-- Persist cleaned outputs to CSV/Parquet
-- Load raw/cleaned tables into PostgreSQL under an `operationals` schema
+---
 
-## Repository Structure
+## 🏗️ Project Architecture
 
-```text
 payflow_case_study/
-├── data_base/
-│   ├── raw_data/
-│   └── processed_data/
+│
 ├── python/
-│   ├── download_data.py
-│   ├── explore.py
-│   ├── load_raw_data.py
-│   └── transform.py
+│   ├── transform.py              # Raw → processed ETL
+│   ├── load_analytics_data.py    # Processed → analytics warehouse loader
+│   ├── wipe_data.py              # Reset raw/processed/analytics layers
+│   ├── run_all.py                # Full pipeline orchestration
+│   └── old_processed_loader.py   # Deprecated (kept for reference)
+│
+├── data_base/
+│   ├── raw_data/                 # Original Olist CSVs
+│   └── processed_data/           # Cleaned & transformed datasets
+│
 ├── sql/
-│   ├── create_raw_table.sql
-│   └── setup_database.sql
-├── NOTE.md
-├── requirements.txt
-└── .gitignore
-```
+│   └── analytics_schema.sql      # DDL for analytics schema
+│
+├── .env                          # Contains DB_URL
+└── README.md
 
-## Tech Stack
+Code
 
-- Python
-- Pandas
-- SQLAlchemy
-- psycopg2
-- python-dotenv
-- PostgreSQL
-- Kaggle CLI
+---
 
-## Data Flow
+## 🚀 Pipeline Overview
 
-1. **Download** the Brazilian e-commerce dataset using the Kaggle CLI.
-2. **Extract** the ZIP archive into `data_base/raw_data/`.
-3. **Explore** source CSVs to understand shapes, columns, dtypes, and null counts.
-4. **Transform** raw files into cleaned customer, merchant, and transaction datasets.
-5. **Save** processed outputs to `data_base/processed_data/`.
-6. **Load** tables into PostgreSQL in the `operationals` schema.
+The pipeline runs in **two major stages**:
 
-## Database Objects
+### **1. Raw → Processed (transform.py)**  
+This stage:
 
-### Schemas
-- `operationals`
-- `analytics` *(created, but not yet populated in the current implementation)*
+- Normalizes column names  
+- Renames fields to match analytics DDL  
+- Cleans customers, merchants, and transactions  
+- Converts timestamps  
+- Saves processed datasets to `data_base/processed_data/`
 
-### Tables currently defined
-- `operationals.customers_raw`
-- `operationals.merchants_raw`
-- `operationals.transactions_raw`
+### **2. Processed → Analytics Warehouse (load_analytics_data.py)**  
+This stage:
 
-## Setup Instructions
+- Loads processed datasets  
+- Validates schema  
+- Builds dimensions (customer, merchant, product, date, etc.)  
+- Builds fact tables  
+- Loads everything into the `analytics` schema in PostgreSQL  
 
-### 1. Clone the repository
+---
 
-```bash
-git clone https://github.com/yoismail/payflow_case_study.git
-cd payflow_case_study
-```
+## 🔄 Full Pipeline Execution
 
-### 2. Create a virtual environment
+Run the entire pipeline with one command:
 
-```bash
-python -m venv venv
-```
+python python/run_all.py
 
-Activate it:
+Code
 
-**Windows**
-```bash
-venv\Scripts\activate
-```
+This performs:
 
-**macOS / Linux**
-```bash
-source venv/bin/activate
-```
+1. **Wipe** raw, processed, and analytics schema  
+2. **Transform** raw → processed  
+3. **Load** processed → analytics warehouse  
 
-### 3. Install dependencies
+All steps include clean, color‑coded logging.
 
-```bash
+---
+
+## 🧹 Resetting the Environment
+
+Use `wipe_data.py` to safely reset any layer:
+
+python python/wipe_data.py processed
+python python/wipe_data.py analytics
+python python/wipe_data.py raw
+python python/wipe_data.py all
+
+Code
+
+This ensures no stale files or mismatched schemas remain.
+
+---
+
+## 🧪 Processed Data Schema
+
+### **Customers (clean_customers.csv)**
+
+| Column                       | Description |
+|------------------------------|-------------|
+| customer_id                  | Unique customer ID |
+| customer_unique_id           | Persistent customer identifier |
+| customer_zip_code_prefix     | ZIP prefix |
+| customer_city                | City |
+| customer_state               | State |
+| country                      | Always "Brazil" |
+
+### **Merchants (clean_merchants.csv)**
+
+| Column                       | Description |
+|------------------------------|-------------|
+| merchant_id                  | Seller ID |
+| merchant_zip_code_prefix     | ZIP prefix |
+| merchant_city                | City |
+| merchant_state               | State |
+| country                      | Always "Brazil" |
+
+### **Transactions (transactions.csv)**  
+Merged from orders, items, and payments.
+
+---
+
+## 🏛️ Analytics Schema
+
+Defined in:
+
+sql/analytics_schema.sql
+
+Code
+
+Created automatically during pipeline execution.
+
+Includes:
+
+- `dim_customer`
+- `dim_merchant`
+- `dim_product`
+- `dim_date`
+- `fact_orders`
+- `fact_payments`
+- `fact_items`
+- etc.
+
+---
+
+## ⚙️ Environment Setup
+
+### 1. Create virtual environment
+
+python -m venv vvenv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+
+Code
+
+### 2. Install dependencies
+
 pip install -r requirements.txt
-```
 
-### 4. Configure environment variables
+Code
 
-Create a `.env` file in the project root:
+### 3. Configure `.env`
 
-```env
-DB_URL=postgresql+psycopg2://postgres:your_password@localhost:5432/payflow_db
-```
+DB_URL=postgresql+psycopg2://user:password@localhost:5432/payflow
 
-### 5. Create the database and schemas
+Code
 
-```bash
-psql -U postgres -h localhost -f sql/setup_database.sql
-psql -U postgres -h localhost -d payflow_db -f sql/create_raw_table.sql
-```
+---
 
-### 6. Run the pipeline scripts
+## 🧭 Development Workflow
 
-Download and extract data:
+Typical workflow:
 
-```bash
-python python/download_data.py
-```
+python python/wipe_data.py all
+python python/run_all.py
 
-Explore source data:
+Code
 
-```bash
-python python/explore.py
-```
+Or manually:
 
-Transform and load data:
-
-```bash
-python python/load_raw_data.py
-```
-
-Optional transformation-only run:
-
-```bash
 python python/transform.py
-```
+python python/load_analytics_data.py
 
-## Key Transformation Logic
+Code
 
-### Customers
-- Deduplicate on `customer_id`
-- Rename fields into cleaner operational names
-- Add a constant `country = 'Brazil'`
+---
 
-### Sellers / Merchants
-- Deduplicate on `seller_id`
-- Rename `seller_id` to `merchant_id`
-- Add a constant `country = 'Brazil'`
+## 🧩 Notes & Design Decisions
 
-### Transactions
-- Start from deduplicated `orders`
-- Join `order_items` on `order_id`
-- Join `order_payments` on `order_id`
-- Convert delivery and approval timestamps to datetime
+- The old processed loader was deprecated to avoid schema conflicts  
+- All analytics loaders now read exclusively from `processed_data/`  
+- Schema validation prevents silent mismatches  
+- DDL is executed before loading any analytics tables  
+- Logging is consistent across all scripts  
 
-## Current Strengths
+---
 
-- Clear separation between Python and SQL assets
-- Practical use of Pandas + PostgreSQL for ETL
-- Good introduction to modular pipeline thinking
-- Basic logging and exception handling are present
-- Raw and processed storage layers are separated
-- Secrets are excluded from version control through `.gitignore`
+## 📈 Future Enhancements
 
-## Current Limitations
+- Add dbt-style documentation  
+- Add Airflow orchestration  
+- Add unit tests for dimension builders  
+- Add data quality checks (Great Expectations)  
 
-- No root `README.md` was present before this one, which weakens first impressions
-- The implementation currently targets **operational/raw loading**, not a finished analytics layer
-- No orchestration script ties the full workflow together end-to-end
-- No tests, data quality assertions, or validation suite yet
-- `if_exists="replace"` in `to_sql()` is risky for repeatable production-style loads
-- Some scripts duplicate logic that should be centralized into reusable modules
-- The `analytics` schema is created but not yet modeled into dimensional or reporting tables
-- No CI/CD, release process, or automated linting is configured
-
-## Recommended Next Steps
-
-To make this repository portfolio-ready at a stronger mid-level to senior level:
-
-1. Add a **single entry-point runner** for the full ETL flow.
-2. Refactor shared logic into reusable modules (`extract`, `transform`, `load`, `config`, `utils`).
-3. Add **data quality checks** for duplicates, nulls, row-count drift, and schema validation.
-4. Introduce **analytics-ready modeling** such as fact and dimension tables.
-5. Replace destructive `replace` loads with **append/upsert** strategies.
-6. Add **logging to file** and structured execution summaries.
-7. Add **unit tests** for transformation functions.
-8. Add **SQL validation queries** and sample analytical questions.
-9. Include **architecture diagrams** and a proper project narrative in the repo.
-10. Add GitHub Actions for linting and test execution.
-
-## Future Enhancements
-
-- Star schema for orders, customers, sellers, products, and payments
-- Incremental loading strategy
-- Data warehouse schema under `analytics`
-- Partitioning/indexing strategy for large transaction tables
-- Pipeline orchestration with Airflow or Prefect
-- Containerization with Docker
-- Great Expectations or Pandera for quality controls
+---
 
 ## Author
 
 **Yomi Ismail**
 
 Data Engineering portfolio project focused on ETL design, PostgreSQL integration, and schema preparation for analytics use cases.
+
+---
