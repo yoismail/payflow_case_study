@@ -71,8 +71,12 @@ def clean_customers(df: pd.DataFrame) -> pd.DataFrame:
 
     clean_customers = df.drop_duplicates(subset="customer_id").copy()
     clean_customers["country"] = "Brazil"
-    clean_customers.columns = ["customer_id", "unique_id", "zip_code",
-                               "city", "state", "country"]
+    clean_customers.columns = ["customer_id",
+                               "customer_unique_id",
+                               "customer_zip_code_prefix",
+                               "customer_city",
+                               "customer_state",
+                               "country"]
     logging.info(f"Cleaned customers: {clean_customers.shape[0]:,} rows")
     return clean_customers
 

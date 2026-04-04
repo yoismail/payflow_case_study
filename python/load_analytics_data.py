@@ -59,11 +59,10 @@ def timed(func):
 # CONFIG
 # =========================================================
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-PROCESSED_DATA_DIR = PROJECT_ROOT / "data_base" / "processed_data"
+PROCESSED_DATA_DIR = Path("data_base/processed_data")
 
 CUSTOMER_FILE_FORMATS = ["clean_customers.csv"]
-# kept for compatibility, not used
+
 MERCHANT_FILE_FORMATS = ["clean_merchants.csv"]
 TRANSACTION_FILE_FORMATS = ["transactions.csv"]
 
@@ -113,14 +112,20 @@ def make_date_key(series: pd.Series) -> pd.Series:
 def build_dim_customer(customers: pd.DataFrame) -> pd.DataFrame:
     dim = customers.copy()
 
-    dim = dim.rename(columns={
-        "customer_unique_id": "customer_unique_id",
-        "customer_zip_code_prefix": "customer_zip_code_prefix",
-        "customer_city": "customer_city",
-        "customer_state": "customer_state",
-    })
+    required_cols = [
+        "customer_id",
+        "customer_unique_id",
+        "customer_zip_code_prefix",
+        "customer_city",
+        "customer_state",
+        "country",
+    ]
 
-    dim = dim.drop_duplicates(subset=["customer_id"]).reset_index(drop=True)
+    missing = [c for c in required_cols if c not in dim.columns]
+    if missing:
+        raise KeyError(f"dim_customer missing columns: {missing}")
+
+    dim = dim.drop_duplicates(subset="customer_id").reset_index(drop=True)
     dim.insert(0, "customer_key", range(1, len(dim) + 1))
 
     return dim[
@@ -414,7 +419,7 @@ def build_fact_payments(
 def create_analytics_tables(engine) -> None:
     section("🏗️ CREATING ANALYTICS TABLES")
 
-    sql_path = PROJECT_ROOT / "sql" / "create_analytics_tables.sql"
+    sql_path = Path("sql") / "create_analytics_tables.sql"
 
     if not sql_path.exists():
         raise FileNotFoundError(f"DDL file not found: {sql_path}")
