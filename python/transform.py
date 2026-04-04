@@ -139,9 +139,18 @@ def clean_customers(df: pd.DataFrame) -> pd.DataFrame:
         .drop_duplicates(subset="customer_id")
         .reset_index(drop=True)
     )
+
+    required_cols = df.rename(columns={
+        "customer_unique_id": "customer_unique_id",
+        "customer_zip_code_prefix": "customer_zip_code_prefix",
+        "customer_city": "customer_city",
+        "customer_state": "customer_state",
+    })
+
     df["country"] = "Brazil"
 
     logging.info(f"Cleaned customers: {df.shape[0]:,} rows")
+
     return df
 
 
@@ -280,10 +289,11 @@ def run_etl() -> None:
         save_dataframe(transactions_df, PROCESSED_DATA_DIR /
                        "transactions", OUTPUT_FORMAT)
 
-        logging.info("\033[92m🎉 ETL pipeline completed successfully!\033[0m\n")
+        logging.info(
+            "\033[92m🎉 Transformation pipeline completed successfully!\033[0m\n")
 
     except Exception as exc:
-        logging.error(f"ETL pipeline failed: {exc}")
+        logging.error(f"Transformation pipeline failed: {exc}")
         logging.error(traceback.format_exc())
         raise
 
