@@ -1,4 +1,4 @@
-# 📦 Payflow Case Study — End‑to‑End ETL & Analytics Pipeline
+# 📦 Payflow Case Study - End‑to‑End ETL & Analytics Pipeline
 
 This project implements a **production‑grade ETL and analytics pipeline** for the Brazilian e‑commerce dataset (Olist).  
 It includes:
