@@ -44,6 +44,14 @@ def get_db_url():
 # ----------------------------
 
 
+def create_data_dir():
+    if not PROCESSED_DATA_DIR.exists():
+        PROCESSED_DATA_DIR.mkdir()
+        logging.info("Data directory created.")
+    else:
+        logging.info("Data directory already exists.")
+
+
 def load_raw_data(file_name: str) -> pd.DataFrame:
     file_path = RAW_DATA_DIR / file_name
     if not file_path.exists():
@@ -141,6 +149,8 @@ def run_etl():
 
     try:
         logging.info("Starting ETL pipeline...")
+
+        create_data_dir()
 
         load_env()
         db_url = get_db_url()

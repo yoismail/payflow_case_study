@@ -123,6 +123,13 @@ def clean_customers(df: pd.DataFrame) -> pd.DataFrame:
 
     df = normalize_columns(df).copy()
 
+    df = df.rename(columns={
+        "unique_id": "customer_unique_id",
+        "zip_code_prefix": "customer_zip_code_prefix",
+        "city": "customer_city",
+        "state": "customer_state",
+    })
+
     required_cols = [
         "customer_id",
         "customer_unique_id",
@@ -130,6 +137,7 @@ def clean_customers(df: pd.DataFrame) -> pd.DataFrame:
         "customer_city",
         "customer_state",
     ]
+
     missing = [col for col in required_cols if col not in df.columns]
     if missing:
         raise KeyError(f"Customers dataset missing columns: {missing}")
@@ -139,13 +147,6 @@ def clean_customers(df: pd.DataFrame) -> pd.DataFrame:
         .drop_duplicates(subset="customer_id")
         .reset_index(drop=True)
     )
-
-    required_cols = df.rename(columns={
-        "customer_unique_id": "customer_unique_id",
-        "customer_zip_code_prefix": "customer_zip_code_prefix",
-        "customer_city": "customer_city",
-        "customer_state": "customer_state",
-    })
 
     df["country"] = "Brazil"
 

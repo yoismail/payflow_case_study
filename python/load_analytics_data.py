@@ -111,10 +111,29 @@ def make_date_key(series: pd.Series) -> pd.Series:
 
 
 def build_dim_customer(customers: pd.DataFrame) -> pd.DataFrame:
-    dim = customers.drop_duplicates(
-        subset=["customer_id"]).reset_index(drop=True)
+    dim = customers.copy()
+
+    dim = dim.rename(columns={
+        "customer_unique_id": "customer_unique_id",
+        "customer_zip_code_prefix": "customer_zip_code_prefix",
+        "customer_city": "customer_city",
+        "customer_state": "customer_state",
+    })
+
+    dim = dim.drop_duplicates(subset=["customer_id"]).reset_index(drop=True)
     dim.insert(0, "customer_key", range(1, len(dim) + 1))
-    return dim
+
+    return dim[
+        [
+            "customer_key",
+            "customer_id",
+            "customer_unique_id",
+            "customer_zip_code_prefix",
+            "customer_city",
+            "customer_state",
+            "country",
+        ]
+    ]
 
 
 def build_dim_product(transactions: pd.DataFrame) -> pd.DataFrame:
