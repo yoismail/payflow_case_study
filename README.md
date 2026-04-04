@@ -16,26 +16,8 @@ The goal is to demonstrate a clean, maintainable, and reproducible data engineer
 
 ## 🏗️ Project Architecture
 
-payflow_case_study/
-│
-├── python/
-│   ├── transform.py              # Raw → processed ETL
-│   ├── load_analytics_data.py    # Processed → analytics warehouse loader
-│   ├── wipe_data.py              # Reset raw/processed/analytics layers
-│   ├── run_all.py                # Full pipeline orchestration
-│   └── old_processed_loader.py   # Deprecated (kept for reference)
-│
-├── data_base/
-│   ├── raw_data/                 # Original Olist CSVs
-│   └── processed_data/           # Cleaned & transformed datasets
-│
-├── sql/
-│   └── analytics_schema.sql      # DDL for analytics schema
-│
-├── .env                          # Contains DB_URL
-└── README.md
+<img width="538" height="433" alt="image" src="https://github.com/user-attachments/assets/2e33d6c1-01ec-4940-a54c-ddf63f97a6ac" />
 
-Code
 
 ---
 
