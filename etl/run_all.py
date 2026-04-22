@@ -59,35 +59,35 @@ def run_step(title: str, command: str):
 # ---------------------------------------
 def main():
     logging.info(
-        "\n🚀 Starting Full Pipeline Run (wipe → transform → analytics load)\n")
+        "\n🚀 Starting Full Pipeline Run (wipe → extract → transform → analytics load)\n")
 
     # 1. Wipe everything
     run_step(
         "WIPING DATA (raw + processed + analytics schema + operationals schema)",
-        f"{PYTHON} {PROJECT_ROOT}/python/wipe_data.py all"
+        f"{PYTHON} {PROJECT_ROOT}/etl/wipe_data.py all"
     )
 
-    # 2. Run load_raw_data
+    # 2. Run extract_raw_data
     run_step(
-        "LOADING RAW DATA",
-        f"{PYTHON} {PROJECT_ROOT}/python/load_raw_data.py"
+        "EXTRACTING RAW DATA",
+        f"{PYTHON} {PROJECT_ROOT}/etl/extract_raw_data.py"
     )
 
     # 3. Run transform
     run_step(
         "RUNNING TRANSFORM PIPELINE",
-        f"{PYTHON} {PROJECT_ROOT}/python/transform.py"
+        f"{PYTHON} {PROJECT_ROOT}/etl/transform.py"
     )
 
     # 4. Run processed data loader
     run_step(
         "LOADING PROCESSED DATA",
-        f"{PYTHON} {PROJECT_ROOT}/python/load_processed_data.py"
+        f"{PYTHON} {PROJECT_ROOT}/etl/load_processed_data.py"
     )
     # 5. Run analytics loader
     run_step(
         "RUNNING ANALYTICS LOADER",
-        f"{PYTHON} {PROJECT_ROOT}/python/load_analytics_data.py"
+        f"{PYTHON} {PROJECT_ROOT}/etl/load_analytics_data.py"
     )
 
     logging.info("\033[92m🎉 FULL PIPELINE COMPLETED SUCCESSFULLY!\033[0m\n")

@@ -9,7 +9,6 @@ import pandas as pd
 # Colored Logging Formatter
 # ----------------------------
 
-
 class ColorFormatter(logging.Formatter):
     COLORS = {
         "INFO": "\033[94m",     # Blue
@@ -35,9 +34,8 @@ logging.basicConfig(level=logging.INFO, handlers=[handler])
 # ----------------------------
 # Paths
 # ----------------------------
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-RAW_DATA_DIR = PROJECT_ROOT / "data_base" / "raw_data"
-PROCESSED_DATA_DIR = PROJECT_ROOT / "data_base" / "processed_data"
+RAW_DATA_DIR = Path("data_base") / "raw_data"
+PROCESSED_DATA_DIR = Path("data_base") / "processed_data"
 OUTPUT_FORMAT = "csv"
 
 
