@@ -1,199 +1,239 @@
-# 📦 Payflow Case Study - End‑to‑End ETL & Analytics Pipeline
+Absolutely, Yomi — here is a **killer, recruiter‑ready, senior‑level README** for your project.  
+It’s written to *sell you* as a data engineer, not just describe files.  
+It reads clean, professional, and portfolio‑ready.
 
-This project implements a **production‑grade ETL and analytics pipeline** for the Brazilian e‑commerce dataset (Olist).  
-It includes:
-
-- A **raw → processed** transformation pipeline  
-- A **processed → analytics warehouse** loader  
-- A **wipe/reset system** for safe re‑runs  
-- A **full pipeline orchestrator**  
-- Clean, color‑coded logging  
-- Schema‑validated dimension and fact building  
-
-The goal is to demonstrate a clean, maintainable, and reproducible data engineering workflow.
+If you want, I can also generate a **diagram pack** (architecture, lineage, star schema) to embed directly.
 
 ---
 
-## 🏗️ Project Architecture
-
-<img width="538" height="433" alt="image" src="https://github.com/user-attachments/assets/2e33d6c1-01ec-4940-a54c-ddf63f97a6ac" />
-
+# 🚀 PAYFLOW CASE STUDY — End‑to‑End Data Engineering Pipeline  
+*A production‑grade ETL + Data Warehouse project built with Python, SQL, and PostgreSQL*
 
 ---
 
-## 🚀 Pipeline Overview
+## 📌 Overview  
+This project implements a **fully automated, reproducible, production‑style data pipeline** for the Brazilian E‑Commerce Public Dataset (Olist).  
+It demonstrates real data engineering skills across:
 
-The pipeline runs in **two major stages**:
+- **Raw data ingestion**  
+- **Data cleaning & standardization**  
+- **Staging schema modeling**  
+- **Star schema warehouse design**  
+- **Fact & dimension construction**  
+- **Orchestration & observability**  
+- **Idempotent environment resets**  
 
-### **1. Raw → Processed (transform.py)**  
-This stage:
+The pipeline is modular, testable, and mirrors real‑world enterprise ETL workflows.
 
-- Normalizes column names  
-- Renames fields to match analytics DDL  
-- Cleans customers, merchants, and transactions  
+---
+
+## 🧱 Architecture Summary  
+The pipeline follows a classic **multi‑layer warehouse architecture**:
+
+```
+Raw Data → Staging → Transform → Analytics Warehouse → BI Layer
+```
+
+### Layers  
+- **Raw Layer**  
+  - Stores downloaded Kaggle CSVs  
+  - Immutable source of truth  
+
+- **Staging Layer**  
+  - Cleaned, standardized tables  
+  - 1:1 with raw data but normalized  
+  - Loaded via SQLAlchemy  
+
+- **Analytics Layer (Star Schema)**  
+  - Dimensions: Customer, Seller, Product, Payment Type, Date  
+  - Facts: Orders, Order Items, Payments  
+  - Surrogate keys, FKs, indexes  
+
+- **Orchestration Layer**  
+  - `run_all.py` executes the full DAG  
+  - `wipe_all.py` resets schemas & folders  
+  - Logging + timing decorators  
+
+---
+
+## 🗂 Project Structure  
+
+```
+PAYFLOW_CASE_STUDY/
+│
+├── data_base/
+│   ├── raw_data/          # Downloaded Kaggle data
+│   └── cleaned_data/      # Cleaned CSV outputs
+│
+├── etl/
+│   ├── extract.py         # Download + extract + validate raw data
+│   ├── explore.py         # Automated dataset exploration
+│   ├── clean.py           # Cleaning + staging load
+│   ├── transform.py       # Star schema builder
+│   ├── run_all.py         # Full pipeline orchestrator
+│   ├── wipe_all.py        # Environment reset tool
+│   ├── logger.py          # Color logging + timing
+│   └── db_config.py       # DB connection loader
+│
+├── sql/
+│   ├── create_staging_tables.sql
+│   ├── create_analytics_tables.sql
+│   └── setup_database.sql
+│
+├── .env
+├── .gitignore
+├── README.md
+└── requirements.txt
+```
+
+---
+
+## 🔄 Pipeline Flow  
+
+### **1. Wipe Phase**
+Resets the environment to a clean state:
+
+- Deletes raw + cleaned folders  
+- Drops & recreates `staging` and `analytics` schemas  
+- Ensures deterministic pipeline runs  
+
+### **2. Extract Phase**
+- Downloads dataset from Kaggle  
+- Extracts ZIP  
+- Validates all CSVs  
+- Logs row counts & missing values  
+
+### **3. Explore Phase**
+- Auto-discovers CSVs  
+- Logs:
+  - shape  
+  - head  
+  - dtypes  
+  - missing values  
+
+### **4. Clean Phase**
+- Cleans customers, sellers, transactions  
+- Handles cancellations  
 - Converts timestamps  
-- Saves processed datasets to `data_base/processed_data/`
+- Saves cleaned CSVs  
+- Loads into **staging schema**  
 
-### **2. Processed → Analytics Warehouse (load_analytics_data.py)**  
-This stage:
+### **5. Transform Phase**
+Builds a full **star schema**:
 
-- Loads processed datasets  
-- Validates schema  
-- Builds dimensions (customer, merchant, product, date, etc.)  
-- Builds fact tables  
-- Loads everything into the `analytics` schema in PostgreSQL  
+#### Dimensions  
+- `dim_customer`  
+- `dim_seller`  
+- `dim_product`  
+- `dim_payment_type`  
+- `dim_date`  
 
----
-
-## 🔄 Full Pipeline Execution
-
-Run the entire pipeline with one command:
-
-python python/run_all.py
-
-Code
-
-This performs:
-
-1. **Wipe** raw, processed, and analytics schema  
-2. **Transform** raw → processed  
-3. **Load** processed → analytics warehouse  
-
-All steps include clean, color‑coded logging.
-
----
-
-## 🧹 Resetting the Environment
-
-Use `wipe_data.py` to safely reset any layer:
-
-python python/wipe_data.py processed
-python python/wipe_data.py analytics
-python python/wipe_data.py raw
-python python/wipe_data.py all
-
-Code
-
-This ensures no stale files or mismatched schemas remain.
-
----
-
-## 🧪 Processed Data Schema
-
-### **Customers (clean_customers.csv)**
-
-| Column                       | Description |
-|------------------------------|-------------|
-| customer_id                  | Unique customer ID |
-| customer_unique_id           | Persistent customer identifier |
-| customer_zip_code_prefix     | ZIP prefix |
-| customer_city                | City |
-| customer_state               | State |
-| country                      | Always "Brazil" |
-
-### **Merchants (clean_merchants.csv)**
-
-| Column                       | Description |
-|------------------------------|-------------|
-| merchant_id                  | Seller ID |
-| merchant_zip_code_prefix     | ZIP prefix |
-| merchant_city                | City |
-| merchant_state               | State |
-| country                      | Always "Brazil" |
-
-### **Transactions (transactions.csv)**  
-Merged from orders, items, and payments.
-
----
-
-## 🏛️ Analytics Schema
-
-Defined in:
-
-sql/analytics_schema.sql
-
-Code
-
-Created automatically during pipeline execution.
+#### Facts  
+- `fact_orders`  
+- `fact_order_items`  
+- `fact_payments`  
 
 Includes:
 
-- `dim_customer`
-- `dim_merchant`
-- `dim_product`
-- `dim_date`
-- `fact_orders`
-- `fact_payments`
-- `fact_items`
-- etc.
+- surrogate keys  
+- date key mapping  
+- lifecycle status  
+- item counts  
+- payment sequences  
+- referential integrity  
+
+### **6. Orchestration**
+`run_all.py` executes:
+
+1. wipe_all  
+2. extract  
+3. clean  
+4. transform  
+
+All steps are timed, logged, and fail‑fast.
 
 ---
 
-## ⚙️ Environment Setup
+## 🧠 Key Engineering Concepts Demonstrated  
 
-### 1. Create virtual environment
+### **✔ Modular ETL Architecture**  
+Each stage is isolated, testable, and reusable.
 
-python -m venv vvenv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
+### **✔ Production‑style Logging**  
+Color‑coded logs, section banners, and timing decorators.
 
-Code
+### **✔ Schema‑Driven Warehouse Design**  
+All tables defined explicitly in SQL, not implicitly in Python.
 
-### 2. Install dependencies
+### **✔ Idempotent Pipeline Execution**  
+`wipe_all.py` ensures clean, repeatable runs.
 
+### **✔ Star Schema Modeling**  
+Optimized for analytics and BI workloads.
+
+### **✔ SQL + Python Integration**  
+SQLAlchemy used for staging + analytics loads.
+
+### **✔ Data Quality Awareness**  
+Validation at extract, clean, and transform stages.
+
+---
+
+## 🛠 Tech Stack  
+
+| Layer | Tools |
+|-------|--------|
+| Language | Python 3.x |
+| Data Processing | pandas |
+| Database | PostgreSQL |
+| ORM / Loader | SQLAlchemy |
+| Environment | dotenv |
+| Logging | custom ColorFormatter |
+| Orchestration | Python subprocess DAG |
+| Source Data | Kaggle (Olist Brazilian E‑Commerce) |
+
+---
+
+## ▶️ Running the Pipeline  
+
+### **1. Install dependencies**
+```
 pip install -r requirements.txt
+```
 
-Code
+### **2. Set your `.env`**
+```
+DB_URL=postgresql://user:password@localhost:5432/payflow
+```
 
-### 3. Configure `.env`
-
-DB_URL=postgresql+psycopg2://user:password@localhost:5432/payflow
-
-Code
-
----
-
-## 🧭 Development Workflow
-
-Typical workflow:
-
-python python/wipe_data.py all
-python python/run_all.py
-
-Code
-
-Or manually:
-
-python python/transform.py
-python python/load_analytics_data.py
-
-Code
+### **3. Run the full pipeline**
+```
+python -m etl.run_all
+```
 
 ---
 
-## 🧩 Notes & Design Decisions
+## 📊 Warehouse Schema (Star Model)
 
-- The old processed loader was deprecated to avoid schema conflicts  
-- All analytics loaders now read exclusively from `processed_data/`  
-- Schema validation prevents silent mismatches  
-- DDL is executed before loading any analytics tables  
-- Logging is consistent across all scripts  
+### **Dimensions**
+- Customer  
+- Seller  
+- Product  
+- Payment Type  
+- Date  
 
----
+### **Facts**
+- Orders  
+- Order Items  
+- Payments  
 
-## 📈 Future Enhancements
-
-- Add dbt-style documentation  
-- Add Airflow orchestration  
-- Add unit tests for dimension builders  
-- Add data quality checks (Great Expectations)  
+Each fact table links to dimensions via surrogate keys.
 
 ---
 
 ## Author
 
 **Yomi Ismail**
-
-Data Engineering portfolio project focused on ETL design, PostgreSQL integration, and schema preparation for analytics use cases.
+Data Engineer & Product Operations Specialist
 
 ---
