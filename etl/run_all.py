@@ -3,41 +3,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-# ---------------------------------------
+
 # Logging Configuration
-# ---------------------------------------
+from etl.logger import ColorFormatter, section, timed
 
-
-class ColorFormatter(logging.Formatter):
-    COLORS = {
-        "INFO": "\033[94m",     # Blue
-        "WARNING": "\033[93m",  # Yellow
-        "ERROR": "\033[91m",    # Red
-        "SUCCESS": "\033[92m",  # Green
-        "RESET": "\033[0m",
-    }
-
-    def format(self, record):
-        color = self.COLORS.get(record.levelname, "")
-        reset = self.COLORS["RESET"]
-        record.msg = f"{color}{record.msg}{reset}"
-        return super().format(record)
-
-
-handler = logging.StreamHandler()
-handler.setFormatter(ColorFormatter(
-    "%(asctime)s - %(levelname)s - %(message)s"))
-logging.basicConfig(level=logging.INFO, handlers=[handler])
-
-# ---------------------------------------
 # Paths
-# ---------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PYTHON = sys.executable  # ensures venv python is used
 
-# ---------------------------------------
-# Helper
-# ---------------------------------------
+# Helper function to run steps with logging and error handling
 
 
 def run_step(title: str, command: str):
@@ -54,47 +28,40 @@ def run_step(title: str, command: str):
     logging.info(f"✔️  {title} completed successfully\n")
 
 
-# ---------------------------------------
 # Main Orchestration
-# ---------------------------------------
+@timed
 def main():
     logging.info(
         "\n🚀 Starting Full Pipeline Run (wipe → extract → transform → analytics load)\n")
 
     # 1. Wipe everything
     run_step(
-        "WIPING DATA (raw + processed + analytics schema + operationals schema)",
-        f"{PYTHON} {PROJECT_ROOT}/etl/wipe_data.py all"
+        "WIPING DATA",
+        f"{PYTHON} -m etl.wipe_all all"
     )
 
     # 2. Run extract_raw_data
     run_step(
         "EXTRACTING RAW DATA",
-        f"{PYTHON} {PROJECT_ROOT}/etl/extract_raw_data.py"
+        f"{PYTHON} -m etl.extract"
+
     )
 
-    # 3. Run transform
+    # 3. Run clean loader and loads cleaned data into staging schema
     run_step(
-        "RUNNING TRANSFORM PIPELINE",
-        f"{PYTHON} {PROJECT_ROOT}/etl/transform.py"
+        "RUNNING CLEAN PIPELINE",
+        f"{PYTHON} -m etl.clean"
     )
 
-    # 4. Run processed data loader
-    run_step(
-        "LOADING PROCESSED DATA",
-        f"{PYTHON} {PROJECT_ROOT}/etl/load_processed_data.py"
-    )
-    # 5. Run analytics loader
+    # 4. Run analytics loader and loads data into analytics schema
     run_step(
         "RUNNING ANALYTICS LOADER",
-        f"{PYTHON} {PROJECT_ROOT}/etl/load_analytics_data.py"
+        f"{PYTHON} -m etl.transform"
     )
 
     logging.info("\033[92m🎉 FULL PIPELINE COMPLETED SUCCESSFULLY!\033[0m\n")
 
 
-# ---------------------------------------
 # Entry Point
-# ---------------------------------------
 if __name__ == "__main__":
     main()

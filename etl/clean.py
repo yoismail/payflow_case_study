@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 import logging
 from dotenv import load_dotenv
+from etl.db_config import load_db_config
 from sqlalchemy import create_engine
 import os
 import traceback
@@ -18,18 +19,7 @@ CLEANED_DATA_DIR = Path("data_base/cleaned_data")
 
 # Environment + DB
 
-
-def load_env():
-    load_dotenv()
-    logging.info("Environment variables loaded.")
-
-
-def get_db_url():
-    db_url = os.getenv("DB_URL")
-    if not db_url:
-        raise ValueError("DB_URL not found in .env file")
-    logging.info("Database URL retrieved.")
-    return db_url
+engine = create_engine(load_db_config())
 
 # Data Loading
 
@@ -177,7 +167,7 @@ def save_dataframe(df: pd.DataFrame, path: Path, format: str = "csv"):
 
 # Load to PostgreSQL
 def load_to_postgres(df, table_name, engine):
-    df.to_sql(table_name, engine, schema="operationals",
+    df.to_sql(table_name, engine, schema="staging",
               if_exists="replace", index=False)
     logging.info(f"Loaded {table_name} into PostgreSQL.")
 
@@ -191,9 +181,7 @@ def run_etl():
 
         create_data_dir()
 
-        load_env()
-        db_url = get_db_url()
-        engine = create_engine(db_url)
+        engine = create_engine(load_db_config())
 
         # Load raw data
         section("📥 LOADING RAW DATASETS")
@@ -235,9 +223,9 @@ def run_etl():
 
         # Load into PostgreSQL
         section("🚚 LOADING CLEANED DATA INTO POSTGRESQL")
-        load_to_postgres(clean_cust, "customers_raw", engine)
-        load_to_postgres(clean_merchants, "merchants_raw", engine)
-        load_to_postgres(transactions, "transactions_raw", engine)
+        load_to_postgres(clean_cust, "customers_clean", engine)
+        load_to_postgres(clean_merchants, "merchants_clean", engine)
+        load_to_postgres(transactions, "txns_clean", engine)
 
         logging.info(f"\033[92m🎉 ETL pipeline completed successfully!\033[0m")
 

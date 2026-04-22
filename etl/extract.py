@@ -7,7 +7,7 @@ import logging
 import sys
 
 # Logging Configuration
-from etl.logging import ColorFormatter, section, timed
+from etl.logger import ColorFormatter, section, timed
 
 # Define Directory Paths
 RAW_DATA_DIR = Path("data_base\\raw_data")

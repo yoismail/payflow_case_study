@@ -3,7 +3,7 @@ from pathlib import Path
 import logging
 
 # Logging setup
-from etl.logging import ColorFormatter, section, timed
+from etl.logger import ColorFormatter, section, timed
 
 
 @timed
@@ -36,7 +36,10 @@ def main():
         try:
             df = pd.read_csv(file_path)
             logging.info(f"Exploring {file_name}...")
+
+            section(f"📊 SUMMARY OF {file_name}")
             logging.info(f"Shape of {file_name}: {df.shape}")
+            logging.info(f"Heading of {file_name}:\n{df.head()}")
             logging.info(f"Columns in {file_name}: {df.columns.tolist()}")
             logging.info(f"Data types in {file_name}:\n{df.dtypes}")
             logging.info(
