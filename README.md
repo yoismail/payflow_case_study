@@ -1,8 +1,3 @@
-Absolutely, Yomi — here is a **killer, recruiter‑ready, senior‑level README** for your project.  
-It’s written to *sell you* as a data engineer, not just describe files.  
-It reads clean, professional, and portfolio‑ready.
-
-If you want, I can also generate a **diagram pack** (architecture, lineage, star schema) to embed directly.
 
 ---
 
