@@ -1,4 +1,4 @@
-merchant_id,zip_code,city,state,country
+merchant_id,merchant_zip_code_prefix,merchant_city,merchant_state,country
 3442f8959a84dea7ee197c632cb2df15,13023,campinas,SP,Brazil
 d1b65fc7debc3361ea86b5f14c68d2e2,13844,mogi guacu,SP,Brazil
 ce3ad9de960102d0677a81f5d0bb7b2d,20031,rio de janeiro,RJ,Brazil
