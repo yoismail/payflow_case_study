@@ -59,13 +59,21 @@ def validate_schema(df: pd.DataFrame, expected_columns: list) -> None:
 
 
 def clean_customers() -> pd.DataFrame:
-    """Load and clean the customer dataset."""
+    # Load and clean the customer dataset
     customer_df = load_raw_data("olist_customers_dataset.csv")
     logging.info(f"Cleaning customers: {customer_df.shape[0]:,} rows")
 
     customers = customer_df.copy().drop_duplicates().reset_index(drop=True)
     customers = columns_normalization(customers)
 
+    # Keep zip as string, not int
+    customers["customer_zip_code_prefix"] = (
+        customers["customer_zip_code_prefix"]
+        .astype("string")
+        .str.strip()
+    )
+
+    # Business is expanding internationally to Brazil. Add a country column with default value "Brazil" for all customers.
     customers["country"] = "Brazil"
 
     expected_columns = [
@@ -94,19 +102,27 @@ def clean_customers() -> pd.DataFrame:
 
 
 def clean_merchants() -> pd.DataFrame:
-    """Load and clean the merchants dataset."""
+    # Load and clean the merchants dataset
     merchants_df = load_raw_data("olist_sellers_dataset.csv")
     logging.info(f"Cleaning merchants: {merchants_df.shape[0]:,} rows")
 
     merchants = merchants_df.drop_duplicates().copy().reset_index(drop=True)
     merchants = columns_normalization(merchants)
 
+    # Rename columns to match dimensional modeling conventions and for clarity
     merchants = merchants.rename(columns={"seller_id": "merchant_id"})
     merchants = merchants.rename(
         columns={"seller_zip_code_prefix": "merchant_zip_code_prefix"})
     merchants = merchants.rename(columns={"seller_city": "merchant_city"})
     merchants = merchants.rename(columns={"seller_state": "merchant_state"})
 
+    # Keep zip as string, not int
+    merchants["merchant_zip_code_prefix"] = (
+        merchants["merchant_zip_code_prefix"]
+        .astype("string")
+        .str.strip()
+    )
+    # Business is expanding internationally to Brazil. Add a country column with default value "Brazil" for all merchants.
     merchants["country"] = "Brazil"
 
     expected_columns = [
@@ -228,7 +244,7 @@ def clean_payments() -> pd.DataFrame:
 
 # Data Merging and Enrichment =  Merging orders, items, and payments into a single transactions dataset for easier analytics and fact table loading.
 def transactions_merge(orders: pd.DataFrame, items: pd.DataFrame, payments: pd.DataFrame) -> pd.DataFrame:
-    """Cleaning Txn Data: Merge orders, items, and payments into transactions."""
+    # Cleaning Txn Data: Merge orders, items, and payments into transactions.
     logging.info(
         f"Merging transactions: orders={orders.shape[0]:,}, items={items.shape[0]:,}, payments={payments.shape[0]:,}")
 
@@ -279,7 +295,7 @@ def handle_cancellations(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def convert_date_columns(df: pd.DataFrame, cols: list) -> pd.DataFrame:
-    """Convert columns to datetime, ignoring missing columns."""
+    # Convert columns to datetime, ignoring missing columns.
     for col in cols:
         if col in df.columns:
             df[col] = pd.to_datetime(df[col], errors="coerce")
@@ -294,7 +310,7 @@ def convert_date_columns(df: pd.DataFrame, cols: list) -> pd.DataFrame:
 
 # Save Data
 def save_dataframe(df: pd.DataFrame, path: Path) -> None:
-    """Save DataFrame to CSV."""
+    # Save DataFrame to CSV.
     output_path = path.with_suffix(".csv")
     df.to_csv(output_path, index=False)
     logging.info(f"Saved CSV: {output_path}")
@@ -369,7 +385,7 @@ def main():
         load_to_postgres(clean_merch, "merchants_clean", engine)
         load_to_postgres(transactions, "transactions_clean", engine)
 
-        logging.info("🎉 ETL Pipeline Completed Successfully!")
+        logging.info(f"\033[32m🎉 ETL Pipeline Completed Successfully!\033[0m")
 
     except Exception as e:
         logging.error(f"Pipeline failed: {e}")
