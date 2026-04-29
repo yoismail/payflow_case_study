@@ -337,11 +337,15 @@ def main():
 
         # Clean data
         section("🧹 CLEANING DATASETS")
-
+        section("🧹 CLEANING CUSTOMERS")
         clean_cust = clean_customers()
+        section("🧹 CLEANING MERCHANTS")
         clean_merch = clean_merchants()
+        section("🧹 CLEANING ORDERS")
         clean_ord = clean_orders()
+        section("🧹 CLEANING ITEMS")
         clean_itm = clean_items()
+        section("🧹 CLEANING PAYMENTS")
         clean_pay = clean_payments()
 
         # Merge
