@@ -212,7 +212,7 @@ python -m etl.run_all
 
 ### **Dimensions**
 - Customer  
-- Seller  
+- Merchant 
 - Product  
 - Payment Type  
 - Date  
