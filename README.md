@@ -118,7 +118,7 @@ Builds a full **star schema**:
 
 #### Dimensions  
 - `dim_customer`  
-- `dim_seller`  
+- `dim_merchant`  
 - `dim_product`  
 - `dim_payment_type`  
 - `dim_date`  
