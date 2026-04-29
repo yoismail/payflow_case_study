@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS analytics.fact_orders CASCADE;
 DROP TABLE IF EXISTS analytics.dim_date CASCADE;
 DROP TABLE IF EXISTS analytics.dim_payment_type CASCADE;
 DROP TABLE IF EXISTS analytics.dim_product CASCADE;
-DROP TABLE IF EXISTS analytics.dim_seller CASCADE;
+DROP TABLE IF EXISTS analytics.dim_merchant CASCADE;
 DROP TABLE IF EXISTS analytics.dim_customer CASCADE;
 
 -- DIMENSIONS
@@ -23,18 +23,19 @@ CREATE TABLE analytics.dim_customer (
     country TEXT
 );
 
-CREATE TABLE analytics.dim_seller (
-    seller_key BIGINT PRIMARY KEY,
+CREATE TABLE analytics.dim_merchant (
+    merchant_key BIGINT PRIMARY KEY,
     merchant_id TEXT NOT NULL UNIQUE,
-    zip_code TEXT,
-    city TEXT,
-    state TEXT,
+    merchant_zip_code_prefix TEXT,
+    merchant_city TEXT,
+    merchant_state TEXT,
     country TEXT
 );
 
 CREATE TABLE analytics.dim_product (
     product_key BIGINT PRIMARY KEY,
-    product_id TEXT NOT NULL UNIQUE
+    product_id TEXT NOT NULL UNIQUE,
+    product_category_name TEXT
 );
 
 CREATE TABLE analytics.dim_payment_type (
@@ -95,7 +96,7 @@ CREATE TABLE analytics.fact_order_items (
 
     order_id TEXT NOT NULL,
     customer_key BIGINT NOT NULL REFERENCES analytics.dim_customer(customer_key),
-    seller_key BIGINT REFERENCES analytics.dim_seller(seller_key),
+    merchant_key BIGINT REFERENCES analytics.dim_merchant(merchant_key),
     product_key BIGINT REFERENCES analytics.dim_product(product_key),
 
     purchase_date_key INTEGER REFERENCES analytics.dim_date(date_key),
@@ -132,9 +133,9 @@ CREATE TABLE analytics.fact_payments (
 );
 
 -- INDEXES
-
+-- Create indexes on dimension keys and commonly queried fields for performance optimization
 CREATE INDEX idx_dim_customer_customer_id ON analytics.dim_customer(customer_id);
-CREATE INDEX idx_dim_seller_merchant_id ON analytics.dim_seller(merchant_id);
+CREATE INDEX idx_dim_merchant_merchant_id ON analytics.dim_merchant(merchant_id);
 CREATE INDEX idx_dim_product_product_id ON analytics.dim_product(product_id);
 CREATE INDEX idx_dim_payment_type_payment_type ON analytics.dim_payment_type(payment_type);
 
@@ -144,11 +145,10 @@ CREATE INDEX idx_fact_orders_purchase_date_key ON analytics.fact_orders(purchase
 CREATE INDEX idx_fact_order_items_order_id ON analytics.fact_order_items(order_id);
 CREATE INDEX idx_fact_order_items_customer_key ON analytics.fact_order_items(customer_key);
 CREATE INDEX idx_fact_order_items_product_key ON analytics.fact_order_items(product_key);
-CREATE INDEX idx_fact_order_items_seller_key ON analytics.fact_order_items(seller_key);
+CREATE INDEX idx_fact_order_items_merchant_key ON analytics.fact_order_items(merchant_key);
 
 CREATE INDEX idx_fact_payments_order_id ON analytics.fact_payments(order_id);
 CREATE INDEX idx_fact_payments_customer_key ON analytics.fact_payments(customer_key);
 CREATE INDEX idx_fact_payments_payment_type_key ON analytics.fact_payments(payment_type_key);
 CREATE INDEX idx_fact_payments_purchase_date_key ON analytics.fact_payments(purchase_date_key);
 
-COMMIT;

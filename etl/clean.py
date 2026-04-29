@@ -198,6 +198,7 @@ def clean_items() -> pd.DataFrame:
         "order_id",
         "merchant_id",
         "product_id",
+        "shipping_limit_date",
         "price",
         "freight_value"
     ]
@@ -289,7 +290,7 @@ def transactions_merge(orders: pd.DataFrame, items: pd.DataFrame, payments: pd.D
 
     transactions = (
         orders
-        .merge(items[["order_id", "merchant_id", "price", "product_id"]], on="order_id", how="left")
+        .merge(items[["order_id", "merchant_id", "price", "product_id", "shipping_limit_date"]], on="order_id", how="left")
         .merge(payments[["order_id", "payment_type", "payment_value"]], on="order_id", how="left")
     )
 
@@ -402,6 +403,7 @@ def main():
         section("📅 CONVERTING DATES")
 
         date_cols = [
+            "shipping_limit_date",
             "order_purchase_timestamp",
             "order_approved_at",
             "order_delivered_carrier_date",
