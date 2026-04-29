@@ -328,7 +328,7 @@ def handle_cancellations(df: pd.DataFrame) -> pd.DataFrame:
         f"Handled cancellations, updated lifecycle_status. Sample:\n{df[['order_id', 'order_status', 'lifecycle_status']].head()}")
     # confirm if missing values remain in critical fields after handling cancellations
     logging.info(
-        f"Missing values after handling cancellations:\n{df[['merchant_id', 'product_id', 'price', 'payment_value']].isnull().sum()}")
+        f"Missing values after handling cancellations:\n{df.isnull().sum()}")
 
     return df
 
@@ -417,6 +417,8 @@ def main():
         save_dataframe(clean_cust, CLEANED_DATA_DIR / "clean_customers")
         save_dataframe(clean_merch, CLEANED_DATA_DIR / "clean_merchants")
         save_dataframe(clean_pdt, CLEANED_DATA_DIR / "clean_products")
+        save_dataframe(clean_ord, CLEANED_DATA_DIR / "clean_orders")
+        save_dataframe(clean_itm, CLEANED_DATA_DIR / "clean_items")
         save_dataframe(transactions, CLEANED_DATA_DIR / "transactions")
 
         # Load DB
@@ -425,6 +427,8 @@ def main():
         load_to_postgres(clean_cust, "customers_clean", engine)
         load_to_postgres(clean_merch, "merchants_clean", engine)
         load_to_postgres(clean_pdt, "products_clean", engine)
+        load_to_postgres(clean_ord, "orders_clean", engine)
+        load_to_postgres(clean_itm, "items_clean", engine)
         load_to_postgres(transactions, "transactions_clean", engine)
 
         logging.info(f"\033[32m🎉 ETL Pipeline Completed Successfully!\033[0m")
