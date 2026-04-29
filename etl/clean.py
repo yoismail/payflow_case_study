@@ -59,6 +59,7 @@ def validate_schema(df: pd.DataFrame, expected_columns: list) -> None:
 
 
 def clean_customers() -> pd.DataFrame:
+    section("🧹 CLEANING CUSTOMERS")
     # Load and clean the customer dataset
     customer_df = load_raw_data("olist_customers_dataset.csv")
     logging.info(f"Cleaning customers: {customer_df.shape[0]:,} rows")
@@ -102,6 +103,7 @@ def clean_customers() -> pd.DataFrame:
 
 
 def clean_merchants() -> pd.DataFrame:
+    section("🧹 CLEANING MERCHANTS")
     # Load and clean the merchants dataset
     merchants_df = load_raw_data("olist_sellers_dataset.csv")
     logging.info(f"Cleaning merchants: {merchants_df.shape[0]:,} rows")
@@ -149,6 +151,7 @@ def clean_merchants() -> pd.DataFrame:
 
 
 def clean_orders() -> pd.DataFrame:
+    section("🧹 CLEANING ORDERS")
     orders_df = load_raw_data("olist_orders_dataset.csv")
     logging.info(f"Cleaning orders: {orders_df.shape[0]:,} rows")
 
@@ -182,6 +185,7 @@ def clean_orders() -> pd.DataFrame:
 
 
 def clean_items() -> pd.DataFrame:
+    section("🧹 CLEANING ITEMS")
     items_df = load_raw_data("olist_order_items_dataset.csv")
     logging.info(f"Cleaning items: {items_df.shape[0]:,} rows")
 
@@ -213,7 +217,41 @@ def clean_items() -> pd.DataFrame:
     return items
 
 
+def clean_products() -> pd.DataFrame:
+    section("🧹 CLEANING PRODUCTS")
+    products_df = load_raw_data("olist_products_dataset.csv")
+    logging.info(f"Cleaning products: {products_df.shape[0]:,} rows")
+
+    products = products_df.drop_duplicates().reset_index(drop=True).copy()
+    products = columns_normalization(products)
+
+    # Fill missing category names with "unknown" since product_id is still present and can be used for joins and analytics.
+    products["product_category_name"] = products["product_category_name"].fillna(
+        "unknown")
+
+    expected_columns = [
+        "product_id",
+        "product_category_name"
+    ]
+    try:
+        validate_schema(products, expected_columns)
+    except ValueError as e:
+        logging.error(f"Schema validation failed: {e}")
+        raise
+
+    products = products[expected_columns]
+
+    logging.info(f"Cleaned products: {products.shape[0]:,} rows")
+    logging.info(f"Heading of clean products:\n{products.head()}")
+    logging.info(f"Data types in clean products:\n{products.dtypes}")
+    logging.info(
+        f"Missing values in clean products:\n{products.isnull().sum()}")
+
+    return products
+
+
 def clean_payments() -> pd.DataFrame:
+    section("🧹 CLEANING PAYMENTS")
     payments_df = load_raw_data("olist_order_payments_dataset.csv")
     logging.info(f"Cleaning payments: {payments_df.shape[0]:,} rows")
 
@@ -244,6 +282,7 @@ def clean_payments() -> pd.DataFrame:
 
 # Data Merging and Enrichment =  Merging orders, items, and payments into a single transactions dataset for easier analytics and fact table loading.
 def transactions_merge(orders: pd.DataFrame, items: pd.DataFrame, payments: pd.DataFrame) -> pd.DataFrame:
+    section("🧹 MERGING TRANSACTIONS")
     # Cleaning Txn Data: Merge orders, items, and payments into transactions.
     logging.info(
         f"Merging transactions: orders={orders.shape[0]:,}, items={items.shape[0]:,}, payments={payments.shape[0]:,}")
@@ -337,15 +376,12 @@ def main():
 
         # Clean data
         section("🧹 CLEANING DATASETS")
-        section("🧹 CLEANING CUSTOMERS")
+
         clean_cust = clean_customers()
-        section("🧹 CLEANING MERCHANTS")
         clean_merch = clean_merchants()
-        section("🧹 CLEANING ORDERS")
+        clean_pdt = clean_products()
         clean_ord = clean_orders()
-        section("🧹 CLEANING ITEMS")
         clean_itm = clean_items()
-        section("🧹 CLEANING PAYMENTS")
         clean_pay = clean_payments()
 
         # Merge
@@ -380,6 +416,7 @@ def main():
 
         save_dataframe(clean_cust, CLEANED_DATA_DIR / "clean_customers")
         save_dataframe(clean_merch, CLEANED_DATA_DIR / "clean_merchants")
+        save_dataframe(clean_pdt, CLEANED_DATA_DIR / "clean_products")
         save_dataframe(transactions, CLEANED_DATA_DIR / "transactions")
 
         # Load DB
@@ -387,6 +424,7 @@ def main():
 
         load_to_postgres(clean_cust, "customers_clean", engine)
         load_to_postgres(clean_merch, "merchants_clean", engine)
+        load_to_postgres(clean_pdt, "products_clean", engine)
         load_to_postgres(transactions, "transactions_clean", engine)
 
         logging.info(f"\033[32m🎉 ETL Pipeline Completed Successfully!\033[0m")
