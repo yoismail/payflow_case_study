@@ -7,7 +7,7 @@ import logging
 import sys
 
 # Logging Configuration
-from logger import setup_logging, section, timed
+from etl.logger import setup_logging, section, timed
 setup_logging()
 
 # Define Directory Paths
