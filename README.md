@@ -5,13 +5,14 @@
 *A production‑grade ETL + Data Warehouse project I designed and built using Python, SQL, and PostgreSQL.*
 
 ---
-
+ 
 ## 🏷️ Badges  
-`https://img.shields.io/badge/Python-3.10+-blue`  
-`https://img.shields.io/badge/PostgreSQL-14+-blue`  
-`https://img.shields.io/badge/ETL-Production--Grade-green`  
-`https://img.shields.io/badge/Logging-Cross--Platform-orange`  
-`https://img.shields.io/badge/Data-Olist%20E--Commerce-yellow`
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue)
+![ETL Pipeline](https://img.shields.io/badge/ETL-Production--Grade-green)
+![Logging](https://img.shields.io/badge/Logging-Cross--Platform-orange)
+![Kaggle Dataset](https://img.shields.io/badge/Data-Olist%20E--Commerce-yellow)
+
 
 ---
 
