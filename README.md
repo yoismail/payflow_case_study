@@ -1,59 +1,60 @@
 
-```markdown
+---
+
 # 🚀 PAYFLOW CASE STUDY — End‑to‑End Data Engineering Pipeline  
-*A production‑grade ETL + Data Warehouse project built with Python, SQL, and PostgreSQL*
+*A production‑grade ETL + Data Warehouse project I designed and built using Python, SQL, and PostgreSQL.*
 
 ---
 
 ## 🏷️ Badges  
-![Python](https://img.shields.io/badge/Python-3.10+-blue)  
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue)  
-![ETL Pipeline](https://img.shields.io/badge/ETL-Production--Grade-green)  
-![Logging](https://img.shields.io/badge/Logging-Cross--Platform-orange)  
-![Kaggle Dataset](https://img.shields.io/badge/Data-Olist%20E--Commerce-yellow)
-
----
-
-## 📌 Overview  
-This project implements a **fully automated, reproducible, production‑style data pipeline** for the Brazilian E‑Commerce Public Dataset (Olist).  
-It demonstrates real data engineering skills across:
-
-- Raw data ingestion  
-- Data cleaning & standardization  
-- Staging schema modeling  
-- Star schema warehouse design  
-- Fact & dimension construction  
-- Orchestration & observability  
-- Idempotent environment resets  
-
-The pipeline is modular, testable, and mirrors real‑world enterprise ETL workflows.
+`https://img.shields.io/badge/Python-3.10+-blue`  
+`https://img.shields.io/badge/PostgreSQL-14+-blue`  
+`https://img.shields.io/badge/ETL-Production--Grade-green`  
+`https://img.shields.io/badge/Logging-Cross--Platform-orange`  
+`https://img.shields.io/badge/Data-Olist%20E--Commerce-yellow`
 
 ---
 
 # 🌟 Why This Project Matters  
 
-Modern data teams need pipelines that are:
+I built this project to demonstrate how I approach **real‑world data engineering problems**—not just writing scripts, but designing systems.
 
-- **Reliable** — no silent failures, no inconsistent states  
-- **Reproducible** — same results every run  
-- **Observable** — logs, timings, and clear execution flow  
-- **Scalable** — modular components that can grow  
-- **Warehouse‑ready** — analytics‑optimized schemas  
+My goals were clear:
 
-This project demonstrates **exactly** how a real data engineer builds such a system:
+- Build a **reliable** pipeline that never leaves the warehouse in an inconsistent state  
+- Make it **reproducible**, so every run produces the same results  
+- Ensure it’s **observable**, with structured logs and execution timings  
+- Architect it to be **scalable**, with clean separation between layers  
+- Deliver a **warehouse‑ready** star schema optimised for analytics  
 
-### ✔ A real multi‑layer warehouse (raw → staging → analytics)  
-### ✔ A fully automated ETL DAG  
-### ✔ A production‑grade logging system  
-### ✔ Clean SQL‑driven schema design  
-### ✔ Idempotent environment resets  
-### ✔ Clear separation of concerns  
-
-It’s the kind of project that shows employers you understand **how data engineering works in the real world**, not just in tutorials.
+This project reflects how I think as a data engineer:  
+**structured, intentional, and focused on long‑term maintainability.**
 
 ---
 
-## 🌐 High‑Level Architecture Diagram  
+# 🧠 What I Demonstrate in This Project
+
+### 🔹 End‑to‑End ETL Engineering  
+I designed and implemented a full pipeline from raw ingestion to analytics‑ready warehouse tables.
+
+### 🔹 Real Data Modeling  
+I built a complete star schema with facts, dimensions, surrogate keys, and referential integrity.
+
+### 🔹 Production‑Ready Logging  
+I engineered a cross‑platform logging system with color output, rotating file logs, and emoji‑aware formatting.
+
+### 🔹 Clean Architecture  
+I separated extract, explore, clean, transform, and orchestration into modular, testable components.
+
+### 🔹 SQL + Python Integration  
+I used SQLAlchemy for loading, raw SQL for schema creation, and pandas for transformation.
+
+### 🔹 Idempotent Execution  
+I ensured the pipeline can be run repeatedly with deterministic results.
+
+---
+
+# 🌐 High‑Level Architecture Diagram  
 
 ```
                 ┌──────────────────────┐
@@ -190,85 +191,109 @@ It’s the kind of project that shows employers you understand **how data engine
 
 ---
 
-## ⭐ Features at a Glance  
+# 🗂 Project Structure 
 
-### 🔹 End‑to‑End ETL Pipeline  
-### 🔹 Production‑Grade Logging System  
-### 🔹 Idempotent Environment Reset  
-### 🔹 Automated Data Exploration  
-### 🔹 Star Schema Warehouse  
-### 🔹 Fully Modular Codebase  
+```
+etl/
+│── extract.py        # Download + validate raw data
+│── explore.py        # Automated dataset exploration
+│── clean.py          # Cleaning + staging load
+│── transform.py      # Star schema builder
+│── run_all.py        # Full pipeline orchestrator
+│── wipe_all.py       # Environment reset tool
+│── logger.py         # Cross‑platform logging system
+│── db_config.py      # DB connection loader
 
----
+data_base/
+│── raw_data/         # Downloaded Kaggle data
+│── cleaned_data/     # Cleaned CSV outputs
 
-## 🧱 Architecture Summary  
-*(unchanged — omitted here for brevity)*
-
----
-
-## 🗂 Project Structure  
-*(unchanged — omitted here for brevity)*
-
----
-
-## 🔄 Pipeline Flow  
-*(unchanged — omitted here for brevity)*
-
----
-
-## 🧠 Key Engineering Concepts Demonstrated  
-*(unchanged — omitted here for brevity)*
+sql/
+│── create_staging_tables.sql
+│── create_analytics_tables.sql
+│── setup_database.sql
+```
 
 ---
 
-## 🛠 Tech Stack  
-*(unchanged — omitted here for brevity)*
+# 🔄 Pipeline Flow 
+
+### 1️⃣ Wipe  
+I reset schemas and folders to guarantee a clean, deterministic run.
+
+### 2️⃣ Extract  
+I download, unzip, validate, and log metadata for all raw files.
+
+### 3️⃣ Explore  
+I automatically profile each dataset (shape, dtypes, missing values).
+
+### 4️⃣ Clean  
+I normalize, clean, and load data into the staging schema.
+
+### 5️⃣ Transform  
+I build the star schema (facts + dimensions) with surrogate keys.
+
+### 6️⃣ Orchestrate  
+I run the full DAG with structured logs and execution timings.
 
 ---
 
-# 🧩 Advanced Logging System (Cross‑Platform + Color + UTF‑8 Safe)  
-*(unchanged — omitted here for brevity)*
+# 🧩 Advanced Logging System 
+
+I built a custom logging system because production pipelines need more than `print()` statements.  
+My logger includes:
+
+- Color‑coded console logs  
+- Smart emoji handling  
+- Clean UTF‑8 rotating file logs  
+- No ANSI codes in file logs  
+- Timing decorators  
+- Section banners  
+- Deterministic handler setup  
+
+This gives me full observability into every stage of the pipeline.
 
 ---
 
-## ▶️ Running the Pipeline  
-*(unchanged — omitted here for brevity)*
+# ▶️ Running the Pipeline  
+
+### Install dependencies  
+```
+pip install -r requirements.txt
+```
+
+### Configure environment  
+```
+DB_URL=postgresql://user:password@localhost:5432/payflow
+```
+
+### Run the full pipeline  
+```
+python -m etl.run_all
+```
 
 ---
 
 # 🤝 Contributing  
 
-Contributions are welcome!  
-If you’d like to improve the pipeline, add new transformations, or enhance documentation:
+If you'd like to contribute, feel free to:
 
-1. Fork the repository  
+1. Fork the repo  
 2. Create a feature branch  
-3. Commit your changes  
+3. Commit changes  
 4. Open a pull request  
-
-Please ensure your code follows:
-
-- modular ETL structure  
-- clean logging practices  
-- SQL‑driven schema definitions  
 
 ---
 
 # 📄 License  
 
-This project is released under the **MIT License**.  
-You are free to use, modify, and distribute it with attribution.
+This project is released under the **MIT License**.
 
 ---
 
-## Author
+# 👤 Author  
 
 **Yomi Ismail**  
-Data Engineer & Product Operations Specialist
-```
+Data Engineer & Product Operations Specialist  
 
 ---
-
-- Add a **Docker setup** section  
-
-Just tell me what direction you want next.
