@@ -4,3 +4,4 @@ __pycache__/
 .env
 exploration.ipynb
 data/
+logs/

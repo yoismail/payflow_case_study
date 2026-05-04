@@ -3,7 +3,8 @@ from pathlib import Path
 import logging
 
 # Logging setup
-from etl.logger import section, timed
+from etl.logger import setup_logging, section, timed
+setup_logging()
 
 
 @timed

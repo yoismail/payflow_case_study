@@ -3,7 +3,10 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 
 from etl.db_config import load_db_config
-from etl.logger import section, timed
+
+# Logging Configuration
+from etl.logger import setup_logging, section, timed
+setup_logging()
 
 
 # Database Engine

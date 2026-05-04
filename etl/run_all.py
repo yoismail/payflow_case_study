@@ -5,7 +5,9 @@ from pathlib import Path
 
 
 # Logging Configuration
-from etl.logger import ColorFormatter, section, timed
+from etl.logger import setup_logging, section, timed
+setup_logging()
+
 
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent

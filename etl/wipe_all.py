@@ -6,8 +6,10 @@ from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 
 # Logging Configuration
-from etl.logger import ColorFormatter, section, timed
+from etl.logger import setup_logging, section, timed
+setup_logging()
 
+# Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = PROJECT_ROOT / "data_base" / "raw_data"
 CLEANED_DATA_DIR = PROJECT_ROOT / "data_base" / "cleaned_data"
