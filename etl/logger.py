@@ -1,5 +1,8 @@
 import logging
+import os
 import time
+
+# Color Formatter (Console)
 
 
 class ColorFormatter(logging.Formatter):
@@ -18,17 +21,35 @@ class ColorFormatter(logging.Formatter):
         return super().format(record)
 
 
-handler = logging.StreamHandler()
-handler.setFormatter(ColorFormatter(
+# Create logs folder
+os.makedirs("logs", exist_ok=True)
+
+
+# Create logger
+logger = logging.getLogger("pipeline")
+logger.setLevel(logging.INFO)
+logger.handlers.clear()   # avoid duplicate logs if reloaded
+
+
+# Console Handler (colored)
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(ColorFormatter(
     "%(asctime)s - %(levelname)s - %(message)s"))
-logging.basicConfig(level=logging.INFO, handlers=[handler])
-logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
+logger.addHandler(console_handler)
 
 
+# File Handler (no colors)
+file_handler = logging.FileHandler("logs/pipeline.log")
+file_handler.setFormatter(logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(message)s"))
+logger.addHandler(file_handler)
+
+
+# Helper utilities
 def section(title: str):
-    logging.info("\n" + "=" * 50)
-    logging.info(f"🔷 {title}")
-    logging.info("=" * 31 + "\n")
+    logger.info("\n" + "=" * 50)
+    logger.info(f"🔷 {title}")
+    logger.info("=" * 31 + "\n")
 
 
 def timed(func):
@@ -36,6 +57,6 @@ def timed(func):
         start = time.time()
         result = func(*args, **kwargs)
         elapsed = time.time() - start
-        logging.info(f"⏱️  Step completed in {elapsed:.2f}s\n")
+        logger.info(f"⏱️ Step completed in {elapsed:.2f}s\n")
         return result
     return wrapper
