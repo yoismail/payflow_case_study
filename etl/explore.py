@@ -3,7 +3,7 @@ from pathlib import Path
 import logging
 
 # Logging setup
-from etl.logger import ColorFormatter, section, timed
+from etl.logger import section, timed
 
 
 @timed
