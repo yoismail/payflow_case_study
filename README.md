@@ -1,8 +1,5 @@
-
----
-
-# 🚀 PAYFLOW CASE STUDY — End‑to‑End Data Engineering Pipeline  
-*A production‑grade ETL + Data Warehouse project I designed and built using Python, SQL, and PostgreSQL.*
+# 🚀 PAYFLOW CASE STUDY: End-to-End Data Engineering Pipeline  
+*A production-grade ETL + Data Warehouse project I designed and built using Python, SQL, and PostgreSQL.*
 
 ---
  
@@ -18,31 +15,31 @@
 
 # 🌟 Why This Project Matters  
 
-I built this project to demonstrate how I approach **real‑world data engineering problems**—not just writing scripts, but designing systems.
+I built this project to demonstrate how I approach **real-world data engineering problems**. Not just writing scripts, but designing systems.
 
 My goals were clear:
 
 - Build a **reliable** pipeline that never leaves the warehouse in an inconsistent state  
 - Make it **reproducible**, so every run produces the same results  
-- Ensure it’s **observable**, with structured logs and execution timings  
+- Ensure it's **observable**, with structured logs and execution timings  
 - Architect it to be **scalable**, with clean separation between layers  
-- Deliver a **warehouse‑ready** star schema optimised for analytics  
+- Deliver a **warehouse-ready** star schema optimised for analytics  
 
 This project reflects how I think as a data engineer:  
-**structured, intentional, and focused on long‑term maintainability.**
+**structured, intentional, and focused on long-term maintainability.**
 
 ---
 
 # 🧠 What I Demonstrate in This Project
 
-### 🔹 End‑to‑End ETL Engineering  
-I designed and implemented a full pipeline from raw ingestion to analytics‑ready warehouse tables.
+### 🔹 End-to-End ETL Engineering  
+I designed and implemented a full pipeline from raw ingestion to analytics-ready warehouse tables.
 
 ### 🔹 Real Data Modeling  
 I built a complete star schema with facts, dimensions, surrogate keys, and referential integrity.
 
-### 🔹 Production‑Ready Logging  
-I engineered a cross‑platform logging system with color output, rotating file logs, and emoji‑aware formatting.
+### 🔹 Production-Ready Logging  
+I engineered a cross-platform logging system with color output, rotating file logs, and emoji-aware formatting.
 
 ### 🔹 Clean Architecture  
 I separated extract, explore, clean, transform, and orchestration into modular, testable components.
@@ -55,7 +52,7 @@ I ensured the pipeline can be run repeatedly with deterministic results.
 
 ---
 
-# 🌐 High‑Level Architecture Diagram  
+# 🌐 High-Level Architecture Diagram  
 
 ```
                 ┌──────────────────────┐
@@ -202,7 +199,7 @@ etl/
 │── transform.py      # Star schema builder
 │── run_all.py        # Full pipeline orchestrator
 │── wipe_all.py       # Environment reset tool
-│── logger.py         # Cross‑platform logging system
+│── logger.py         # Cross-platform logging system
 │── db_config.py      # DB connection loader
 
 data_base/
@@ -225,7 +222,7 @@ I reset schemas and folders to guarantee a clean, deterministic run.
 ### 2️⃣ Extract  
 I download, unzip, validate, and log metadata for all raw files.
 
-### 3️⃣ Explore  
+### 3️ Explore  
 I automatically profile each dataset (shape, dtypes, missing values).
 
 ### 4️⃣ Clean  
@@ -244,9 +241,9 @@ I run the full DAG with structured logs and execution timings.
 I built a custom logging system because production pipelines need more than `print()` statements.  
 My logger includes:
 
-- Color‑coded console logs  
+- Color-coded console logs  
 - Smart emoji handling  
-- Clean UTF‑8 rotating file logs  
+- Clean UTF-8 rotating file logs  
 - No ANSI codes in file logs  
 - Timing decorators  
 - Section banners  
